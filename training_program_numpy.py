@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 def normalize(array):
     return (array - np.min(array)) / (np.max(array) - np.min(array))
 
+def denormalize(array, original):
+    return array * (np.max(original) - np.min(original)) + np.min(original)
+
 #hypothesis function: returns estimated price according to mileage
 #theta0 doit etre positif et theta1 negatif
 def hypothesis(mileage, theta0, theta1):
@@ -22,9 +25,11 @@ def read_csv_to_3d_array(filename):
         num_rows = len(data)
         Xmileage_array = np.array(data.loc[:,"km"][0:num_rows]).reshape(-1, 1)  #Reshapes the data arrays into column vector
         Yprice_array = np.array(data.loc[0:, "price"]).reshape(-1, 1)
-        Xmileage_array = normalize(Xmileage_array)
-        Yprice_array = normalize(Yprice_array)
-        return Xmileage_array, Yprice_array
+        X_normalized = normalize(Xmileage_array)
+        Y_normalized = normalize(Yprice_array)
+        #Xmileage_array = normalize(Xmileage_array)
+        #Yprice_array = normalize(Yprice_array)
+        return X_normalized, Y_normalized
 
     except FileNotFoundError:
         print(f"File {filename} not found.")
@@ -116,31 +121,28 @@ class LinearRegression:
 
 
 filename = 'data.csv'
-X, Y = read_csv_to_3d_array(filename)
-X = np.hstack([np.ones((X.shape[0], 1)), X])
-print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX=", X)
+X, Y, = read_csv_to_3d_array(filename)
 m = len(X) #iterations of the training program
 
-# linear_reg = LinearRegression(X, Y, m)
+linear_reg = LinearRegression(X, Y, m)
 
-# theta0, theta1 = linear_reg.gradient_descent()
-# print("theta0 et theta1===", theta0, theta1)
-# # Predict car prices
-# #predicted_prices = [hypothesis(mileage, theta0, theta1) for mileage in X]
+theta0, theta1 = linear_reg.gradient_descent()
+print("theta0 et theta1===", theta0, theta1)
+# Predict car prices
+#predicted_prices = [hypothesis(mileage, theta0, theta1) for mileage in X]
 
-#  # Initialize figure and axis for animation 
-# fig, ax = plt.subplots() 
-# x_vals = np.linspace(min(X), max(X), 100) 
-# y_vals = hypothesis(x_vals, theta0, theta1)
-# line = ax.plot(x_vals, y_vals, color='red', label='Regression Line') 
-# ax.scatter(X, Y, marker='o', 
-#         color='green', label='Training Data') 
+ # Initialize figure and axis for animation 
+fig, ax = plt.subplots() 
+x_vals = np.linspace(min(X), max(X), 100) 
+y_vals = hypothesis(x_vals, theta0, theta1)
+line = ax.plot(x_vals, y_vals, color='red', label='Regression Line') 
+ax.scatter(X, Y, marker='o', color='green', label='Training Data') 
 
-# # Adding labels and title
-# plt.xlabel('Mileage')
-# plt.ylabel('Price')
-# plt.title('Car Price Prediction')
-# plt.legend()
+# Adding labels and title
+plt.xlabel('Mileage')
+plt.ylabel('Price')
+plt.title('Car Price Prediction')
+plt.legend()
 
-# # Show the plot
-# plt.show()
+# Show the plot
+plt.show()
