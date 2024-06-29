@@ -1,15 +1,11 @@
-import csv
 import json
 import sys
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from tools import normalize, denormalize, on_key
 
-def normalize(array):
-    return (array - np.min(array)) / (np.max(array) - np.min(array))
 
-def denormalize(array, original):
-    return array * (np.max(original) - np.min(original)) + np.min(original)
 
 #hypothesis function: returns estimated price according to mileage
 #theta0 doit etre positif et theta1 negatif
@@ -136,6 +132,10 @@ plt.xlabel('Mileage')
 plt.ylabel('Price')
 plt.title('Car Price Prediction')
 plt.legend()
+
+
+# Connect the escape key press event to the on_key function
+fig.canvas.mpl_connect('key_press_event', on_key)
 
 # Show the plot
 plt.show()
