@@ -13,4 +13,4 @@ To run the price prediction program:
 To run machine learning program:
 > python training_program_numpy.py
 
-Replace <python> by your current alias.
+Replace python by your current alias.
